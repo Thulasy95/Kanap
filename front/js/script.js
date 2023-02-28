@@ -1,7 +1,8 @@
 //Récupération des données de l'API HTTP et converti en données JSON :
-async function fetchRécupérerProduits()
+const allProducts = 'http://localhost:3000/api/products';
+async function fetchRequestAPIData()
 {
-    const reponse = await fetch('http://localhost:3000/api/products', {
+    const reponse = await fetch(allProducts, {
         method:'GET', // on veut obtenir les informations
         headers: {Accept: "application/json"} // on accepte que le format json
     })
@@ -14,51 +15,69 @@ async function fetchRécupérerProduits()
 }
 
 //Traitrement des données JSON
-fetchRécupérerProduits().then(produits => {
-    console.log(produits);
-    //efface le contenu de <section class="items">
+fetchRequestAPIData().then(products => {
+    
+    //Efface le contenu de <section class="items">
     document.querySelector(".items").innerHTML = ""; 
+    
     //Affiche les produits de l'API :
-    insererProduits(produits);
+    display(products);
 });
-//catch ?? faut-il le mettre ?
 
-// fonction pour Afficher les produits de l'API dans la page d'accueil
-function insererProduits(produits)
+
+/**
+ * fonction pour afficher les produits de l'API dans la page d'accueil 
+ * @param { String } products - liste des produits
+ */
+function display(products)
 {
-    for (let i = 0; i < produits.length; i++)
+    for (let i = 0; i < products.length; i++)
     {
         //Sélection de l'endroit où les balises doivent s'afficher, ici dans la balise section nommer par la classe items
         const sectionItems = document.querySelector(".items");
         
         //Création des balises HTML :
-        const lienElement = document.createElement("a");
-        lienElement.setAttribute('href',''); // attribut href créé
-        lienElement.href = './product.html?id='+produits[i]._id; // valeur de l'attribut href modifiée
-        
-        const produitsElement = document.createElement("article");
-        
-        const imageElement = document.createElement("img");
-        imageElement.src = produits[i].imageUrl; // attribut src
-        imageElement.alt = produits[i].altTxt; // attribut alt
-        
-        const nomElement = document.createElement("h3");
-        nomElement.innerText = produits[i].name; // texte de h3
-        nomElement.setAttribute('class','productName'); // attribut class
+        const linkElement = document.createElement("a"); //balise a créée
+        linkElement.setAttribute('href',`./product.html?id=${products[i]._id}`); // attribut href créé
+        sectionItems.appendChild(linkElement); //<a> rattachée à <section class="items">
 
-        const descriptionElement = document.createElement("p");
-        descriptionElement.innerText = produits[i].description; // texte de p
-        descriptionElement.setAttribute('class','productDescription'); // attribut class
+        const articleElement = document.createElement("article");
+        linkElement.appendChild(articleElement);
 
-        //Rattachement des balises au DOM :
-        // <section class="items"> contient <a>
-        sectionItems.appendChild(lienElement); //balise a
-        // <a> contient <article>
-        lienElement.appendChild(produitsElement); //balise article
-        // <article> contient <img>, <h3> et <p>
-        produitsElement.appendChild(imageElement); //balise img
-        produitsElement.appendChild(nomElement); //balise h3
-        produitsElement.appendChild(descriptionElement); //balise p
+        createIMG(products[i],articleElement);
         
+        createTextWithClass("h3",products[i].name,'productName',articleElement);
+
+        createTextWithClass("p",products[i].description,'productDescription',articleElement);  
     }
+}
+
+
+/**
+ * Création d'une balise img avec les attributs src et alt qui contient l'image du produit 
+ * @param { String } item - image du produit
+ * @param { String } parent - nom du parent où la balise HTML est rattachée
+ */
+function createIMG(item,parent)
+{
+    const imageElement = document.createElement("img");
+    imageElement.src = item.imageUrl;
+    imageElement.alt = item.altTxt;
+    parent.appendChild(imageElement);
+}
+
+
+/**
+ * Création d'une balise avec un attribut class qui contient du texte 
+ * @param { "String" } tag - balise HTML entre " "
+ * @param { String } itemText - texte contenu dans la balise HTML
+ * @param { 'String' } classAttribute - nom de la classe entre ' '
+ * @param { String } parent - nom du parent où la balise HTML est rattachée
+ */
+function createTextWithClass(tag,itemText,classAttribute,parent)
+{
+    const textElement = document.createElement(tag);
+    textElement.innerText = itemText;
+    textElement.setAttribute('class',classAttribute);
+    parent.appendChild(textElement);
 }
