@@ -37,9 +37,7 @@ function display(products)
         const sectionItems = document.querySelector(".items");
         
         //Création des balises HTML :
-        const linkElement = document.createElement("a"); //balise a créée
-        linkElement.setAttribute('href',`./product.html?id=${products[i]._id}`); // attribut href créé
-        sectionItems.appendChild(linkElement); //<a> rattachée à <section class="items">
+        const linkElement = createAHref(`./product.html?id=${products[i]._id}`,sectionItems);
 
         const articleElement = document.createElement("article");
         linkElement.appendChild(articleElement);
@@ -50,34 +48,4 @@ function display(products)
 
         createTextWithClass("p",products[i].description,'productDescription',articleElement);  
     }
-}
-
-
-/**
- * Création d'une balise img avec les attributs src et alt qui contient l'image du produit 
- * @param { String } item - image du produit
- * @param { String } parent - nom du parent où la balise HTML est rattachée
- */
-function createIMG(item,parent)
-{
-    const imageElement = document.createElement("img");
-    imageElement.src = item.imageUrl;
-    imageElement.alt = item.altTxt;
-    parent.appendChild(imageElement);
-}
-
-
-/**
- * Création d'une balise avec un attribut class qui contient du texte 
- * @param { "String" } tag - balise HTML entre " "
- * @param { String } itemText - texte contenu dans la balise HTML
- * @param { 'String' } classAttribute - nom de la classe entre ' '
- * @param { String } parent - nom du parent où la balise HTML est rattachée
- */
-function createTextWithClass(tag,itemText,classAttribute,parent)
-{
-    const textElement = document.createElement(tag);
-    textElement.innerText = itemText;
-    textElement.setAttribute('class',classAttribute);
-    parent.appendChild(textElement);
 }

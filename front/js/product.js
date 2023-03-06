@@ -44,11 +44,7 @@ fetchRequestAPIData().then(product => {
     for (let i = 0; i < product.colors.length; i++)
     {
         const selectColors = document.querySelector("#colors");
-        
-        const optionElement = document.createElement("option");
-        optionElement.value = product.colors[i];
-        optionElement.innerText = product.colors[i];
-        selectColors.appendChild(optionElement);
+        createOption(product.colors[i],product.colors[i],selectColors);
     }
 
     //Fonction pour ajouter le produit, la couleur, et la quantité au panier lors du clic du bouton :
@@ -57,30 +53,6 @@ fetchRequestAPIData().then(product => {
 
 });
 
-
-/**
- * Création d'une balise qui contient du texte 
- * @param { "String" } tag - balise HTML entre " "
- * @param { String } itemText - texte contenu dans la balise HTML
-*/
-function selectTagWriteText(tag,itemText)
-{
-    const textElement = document.querySelector(tag);
-    textElement.innerText = itemText;
-}
-
-/**
- * Création d'une balise img avec les attributs src et alt qui contient l'image du produit 
- * @param { String } item - image du produit
- * @param { String } parent - nom du parent où la balise HTML est rattachée
- */
-function createIMG(item,parent)
-{
-    const imageElement = document.createElement("img");
-    imageElement.src = item.imageUrl;
-    imageElement.alt = item.altTxt;
-    parent.appendChild(imageElement);
-}
 
 function buttonAddProduct(buttonAddToCart,product)
 {
@@ -106,21 +78,19 @@ function buttonAddProduct(buttonAddToCart,product)
                 color: colorValueSelected,
                 quantity: quantityValueSelected 
             };
-             
-            //On récupére le panier du local storage (tableau en String)
-            let cart = localStorage.getItem("product");
             
+            //on récupére le panier(Array) :
+            let cart = getArrayCartFromLocalStorage("product");
+            console.log(cart);
+
             //s'il n'y a pas de panier/tableau (avec produit) dans le local storage
             if(cart == null) {
 
                 //alors on créé un panier/tableau(Array) vide,
                 let cart = [];
 
-                //on ajoute une ligne de l'objet produit sélectionné dans le panier/tableau(Array),
-                cart.push(productSelected);
-
-                //on sauvegarde le panier/tableau (convertit du Array en String) dans le local storage,
-                localStorage.setItem("product",JSON.stringify(cart));
+                //on ajoute l'objet productSelected dans le panier et on sauvegarde le panier dans le local storage :
+                setStringCartInLocalStorage(cart,productSelected,"product");
 
                 //et on affiche un message
                 alert("Votre premier produit a été ajouté au panier.");
@@ -128,9 +98,6 @@ function buttonAddProduct(buttonAddToCart,product)
             }
             //si le local storage contient déjà un panier/tableau (avec produit)
             else {
-                
-                //Alors on récupère le panier/tableau (convertit du string en Array) du local storage,
-                cart = JSON.parse(cart);
 
                 let productAlreadyInLocalStorage;
 
@@ -170,13 +137,10 @@ function buttonAddProduct(buttonAddToCart,product)
                     productAlreadyInLocalStorage.quantity = MAX_QTE;
 
                     }
-
-                    //on ajoute la ligne de l'objet du même produit avec la quantité modifiée dans le panier/tableau(Array),
-                    cart.push(productAlreadyInLocalStorage);
-
-                    //on sauvegarde le panier/tableau (convertit du Array en String) avec la quantité modifiée dans le local storage,
-                    localStorage.setItem("product",JSON.stringify(cart));
-
+                    
+                    //on ajoute l'objet productAlreadyInLocalStorage dans le panier et on sauvegarde le panier dans le local storage :
+                    setStringCartInLocalStorage(cart,productAlreadyInLocalStorage,"product");
+                    
                     //on affiche un message
                     alert("La quantité du produit sélectionné a été modifiée dans le panier. ("+ productAlreadyInLocalStorage.quantity+" articles)");
                
@@ -184,18 +148,14 @@ function buttonAddProduct(buttonAddToCart,product)
                 //si le produit sélectionné n'est pas dans le panier
                 else{
 
-                    //alors on ajoute une ligne de l'objet produit sélectionné dans le panier/tableau(Array),
-                    cart.push(productSelected);
-
-                    //on sauvegarde le panier/tableau (convertit du Array en String) dans le local storage,
-                    localStorage.setItem("product",JSON.stringify(cart));
+                    //alors on ajoute l'objet productSelected dans le panier et on sauvegarde le panier dans le local storage :
+                    setStringCartInLocalStorage(cart,productSelected,"product");
 
                     //et on affiche un message
                     alert("Votre produit a été ajouté au panier.");
 
                 }
             }
-            //console.log(cart);
         } 
         // Sinon afficher message d'erreur
         else {
@@ -205,17 +165,3 @@ function buttonAddProduct(buttonAddToCart,product)
         }
     });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
