@@ -1,3 +1,6 @@
+/*****************************Partie Produits du Panier*****************************/
+
+
 //Récupération du panier(Array) :
 let cart = getArrayCartFromLocalStorage("product");
 console.log(cart);
@@ -109,7 +112,7 @@ function displayCart(products)
         //<input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="42">
         const inputItemQuantityElement = createInputNumber("itemQuantity","itemQuantity",cart[i].quantity,1,100,divQuantityElement);
         //lorsqu'il y a changement de quantité :
-        inputItemQuantityElement.addEventListener("change",  function(event) {
+        inputItemQuantityElement.addEventListener("change", function(event){
             
             //on appelle la fonction changeQuantity à l'input où la quantité est modifiée :
             changeQuantity(event.target);
@@ -273,7 +276,146 @@ function deleteProduct(clickDeleteProduct){
 }
 
 
+/*****************************Partie Formulaire de Commande*****************************/
 
 
+//Fonction pour commander lors du clic sur "Commander" :
+const formCartOrderElement = document.querySelector(".cart__order__form");
+formCartOrderElement.addEventListener("submit", function(event){
+
+    //pour ne pas changer l’URL de l’onglet et initier le chargement d’une nouvelle page, on ajoute :
+    event.preventDefault();
+
+    //on crée l'objet Contact :
+    const firstName = document.querySelector("#firstName");
+    const lastName = document.querySelector("#lastName");
+    const address = document.querySelector("#address");
+    const city = document.querySelector("#city");
+    const email = document.querySelector("#email");
+
+    let contact = {
+
+        firstName : firstName.value,
+        lastName : lastName.value,
+        address : address.value,
+        city : city.value,
+        email : email.value
+
+    };
+
+    //Récupération du tableau des produits(panier) du localstorage :
+    let cart = getArrayCartFromLocalStorage("product");
+
+    //Si le panier est vide :
+    if(cart == null){
+
+        //alors on retourne un message d'alerte :
+        alert("Attention votre panier est vide. Pour commander, merci d'ajouter au moins un produit au panier.");
     
+    } else {
+
+        //Sinon on créé un tableau avec les ids des produits du panier :  
+        let productsId = [];
+
+        for(i=0;i<cart.length;i++){
     
+            productsId.push(cart[i].productID);
+
+        }
+
+ /*       //on définit les regex pour les champs de saisies du formulaire :
+        const firstLastNameRegExp = /^[A-Za-z]+$/;
+        const addressCityRegExp = /^[0-9a-zA-Z]+$/;
+        const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+        //et si les données saisies dans le formulaire sont tous validées :
+        if(firstLastNameRegExp.test(firstName.value) && firstLastNameRegExp.test(lastName.value) && addressCityRegExp.test(address.value) && addressCityRegExp.test(city.value) && emailRegExp.test(email.value)){
+*/
+            //alors on envoie l'objet order convertit en String à l'API :
+            let order = {
+                contact,
+                products:productsId
+            };
+
+            const orderAPI = `http://localhost:3000/api/products/order`;
+            fetch(orderAPI,{
+                method:'POST',
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(order)
+            })
+            .then(response => response.json())
+            .then(orders => {
+
+                //on vide le panier du local storage :
+                localStorage.clear();
+
+                //on vide les champs de saisies du formulaire :
+                formCartOrderElement.reset();
+
+                //et on va sur la page confirmation :
+                document.location.href=`./confirmation.html?orderId=${orders.orderId}`;
+
+            })
+            .catch(()=>{new Error('Impossible de contacter le serveur pour envoyer les commandes')});
+            
+/*        } else {
+
+            //Sinon on un affiche le message d'alerte
+            alert("Merci de vérifier vos champs de saisie dans le formulaire de commande.");
+
+            //Et les messages d'erreur dans les champs de saisies incorrectes :
+            firstName.addEventListener("change", function(){
+            
+                //Si le champs prénom n'est pas valide : 
+                if(!firstLastNameRegExp.test(firstName.value)){
+                    
+                    //Alors on affiche le message d'erreur :
+                    document.querySelector("#firstNameErrorMsg").innerText = "Le prénom ne peut contenir que des lettres majuscules et miniuscules";
+                }     
+            });
+        
+            lastName.addEventListener("change", function(){
+            
+                //Si le champs prénom n'est pas valide : 
+                if(!firstLastNameRegExp.test(lastName.value)){
+                    
+                    //Alors on affiche le message d'erreur :
+                    document.querySelector("#lastNameErrorMsg").innerText = "Le nom ne peut contenir que des lettres majuscules et miniuscules";
+                }     
+            });
+        
+            address.addEventListener("change", function(){
+            
+                //Si le champs prénom n'est pas valide : 
+                if(!addressCityRegExp.test(address.value)){
+                    
+                    //Alors on affiche le message d'erreur :
+                    document.querySelector("#addressErrorMsg").innerText = "L'adresse ne peut contenir que des lettres majuscules, miniuscules et des chiffres";
+                
+                }     
+            });
+        
+            city.addEventListener("change", function(){
+            
+                //Si le champs prénom n'est pas valide : 
+                if(!addressCityRegExp.test(city.value)){
+                    
+                    //Alors on affiche le message d'erreur :
+                    document.querySelector("#cityErrorMsg").innerText = "La ville ne peut contenir que des lettres majuscules, miniuscules et des chiffres";
+                
+                }     
+            });
+        
+            email.addEventListener("change", function(){
+            
+                //Si le champs prénom n'est pas valide : 
+                if(!emailRegExp.test(email.value)){
+                    
+                    //Alors on affiche le message d'erreur :
+                    document.querySelector("#emailErrorMsg").innerText = "L'email doit contenir un @.";                                
+                
+                }     
+            });
+        }*/
+    }    
+});
