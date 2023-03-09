@@ -146,24 +146,15 @@ function createTagWithClass(tag,classValue,parent){
 
 function createInputNumber(classe,name,value,min,max,parent){
     
-    let inputNumber = createInput("number",classe,name,value,parent);
-    inputNumber.setAttribute("min",min);
-    inputNumber.setAttribute("max",max); 
+    const inputNumberElement = document.createElement("input");
+    inputNumberElement.setAttribute("type","number");
+    inputNumberElement.setAttribute("class",classe);
+    inputNumberElement.setAttribute("name",name);
+    inputNumberElement.setAttribute("min",min);
+    inputNumberElement.setAttribute("max",max);    
+    inputNumberElement.setAttribute("value",value );
+    parent.appendChild(inputNumberElement);
     
-    return inputNumber;   
-
-}
-
-
-function createInput(type, classe, name, value, parent){
-    
-    const inputElement = document.createElement("input");
-    inputElement.setAttribute("type",type);
-    inputElement.setAttribute("class",classe);
-    inputElement.setAttribute("name",name);   
-    inputElement.setAttribute("value",value );
-    parent.appendChild(inputElement);
-
-    return inputElement;
+    return inputNumberElement;   
 
 }
