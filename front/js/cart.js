@@ -293,6 +293,13 @@ formCartOrderElement.addEventListener("submit", function(event){
     const city = document.querySelector("#city");
     const email = document.querySelector("#email");
 
+    //on définit les regex pour les champs de saisies du formulaire :
+    const firstLastNameRegExp = /^[A-Za-z\s,.'-]+$/;
+    const addressCityRegExp = /^([0-9a-zA-Z\s,.'-]{3,1000})+$/;
+    const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+    changeErrorMsg(firstName,lastName,address,city,email,firstLastNameRegExp,addressCityRegExp,emailRegExp);
+
     let contact = {
 
         firstName : firstName.value,
@@ -323,22 +330,15 @@ formCartOrderElement.addEventListener("submit", function(event){
 
         }
 
- /*       //on définit les regex pour les champs de saisies du formulaire :
-        const firstLastNameRegExp = /^[A-Za-z]+$/;
-        const addressCityRegExp = /^[0-9a-zA-Z]+$/;
-        const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if(validatingForm(firstName,lastName,address,city,email,firstLastNameRegExp,addressCityRegExp,emailRegExp) == true){
 
-        //et si les données saisies dans le formulaire sont tous validées :
-        if(firstLastNameRegExp.test(firstName.value) && firstLastNameRegExp.test(lastName.value) && addressCityRegExp.test(address.value) && addressCityRegExp.test(city.value) && emailRegExp.test(email.value)){
-*/
             //alors on envoie l'objet order convertit en String à l'API :
             let order = {
                 contact,
                 products:productsId
             };
 
-            const orderAPI = `http://localhost:3000/api/products/order`;
-            fetch(orderAPI,{
+            fetch(`http://localhost:3000/api/products/order`,{
                 method:'POST',
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(order)
@@ -357,65 +357,155 @@ formCartOrderElement.addEventListener("submit", function(event){
 
             })
             .catch(()=>{new Error('Impossible de contacter le serveur pour envoyer les commandes')});
-            
-/*        } else {
+        } else {
 
-            //Sinon on un affiche le message d'alerte
+            //Sinon on affiche les erreurs dans le formulaire :
+            displayErrorMsg(firstName,lastName,address,city,email,firstLastNameRegExp,addressCityRegExp,emailRegExp);
+
+            //et on un affiche le message d'alerte
             alert("Merci de vérifier vos champs de saisie dans le formulaire de commande.");
 
-            //Et les messages d'erreur dans les champs de saisies incorrectes :
-            firstName.addEventListener("change", function(){
-            
-                //Si le champs prénom n'est pas valide : 
-                if(!firstLastNameRegExp.test(firstName.value)){
-                    
-                    //Alors on affiche le message d'erreur :
-                    document.querySelector("#firstNameErrorMsg").innerText = "Le prénom ne peut contenir que des lettres majuscules et miniuscules";
-                }     
-            });
-        
-            lastName.addEventListener("change", function(){
-            
-                //Si le champs prénom n'est pas valide : 
-                if(!firstLastNameRegExp.test(lastName.value)){
-                    
-                    //Alors on affiche le message d'erreur :
-                    document.querySelector("#lastNameErrorMsg").innerText = "Le nom ne peut contenir que des lettres majuscules et miniuscules";
-                }     
-            });
-        
-            address.addEventListener("change", function(){
-            
-                //Si le champs prénom n'est pas valide : 
-                if(!addressCityRegExp.test(address.value)){
-                    
-                    //Alors on affiche le message d'erreur :
-                    document.querySelector("#addressErrorMsg").innerText = "L'adresse ne peut contenir que des lettres majuscules, miniuscules et des chiffres";
-                
-                }     
-            });
-        
-            city.addEventListener("change", function(){
-            
-                //Si le champs prénom n'est pas valide : 
-                if(!addressCityRegExp.test(city.value)){
-                    
-                    //Alors on affiche le message d'erreur :
-                    document.querySelector("#cityErrorMsg").innerText = "La ville ne peut contenir que des lettres majuscules, miniuscules et des chiffres";
-                
-                }     
-            });
-        
-            email.addEventListener("change", function(){
-            
-                //Si le champs prénom n'est pas valide : 
-                if(!emailRegExp.test(email.value)){
-                    
-                    //Alors on affiche le message d'erreur :
-                    document.querySelector("#emailErrorMsg").innerText = "L'email doit contenir un @.";                                
-                
-                }     
-            });
-        }*/
+        }
     }    
 });
+
+function changeErrorMsg(firstName,lastName,address,city,email,firstLastNameRegExp,addressCityRegExp,emailRegExp){
+
+    firstName.addEventListener("change", function(){
+            
+        if(firstLastNameRegExp.test(firstName.value)==false){
+    
+            //Alors on affiche le message d'erreur :
+            document.querySelector("#firstNameErrorMsg").innerText = "Le prénom ne peut contenir que des lettres majuscules et miniuscules sans accents";
+        } else{
+
+            //Alors on efface le message d'erreur :
+            document.querySelector("#firstNameErrorMsg").innerText = "";
+        }
+    
+    });
+
+    lastName.addEventListener("change", function(){
+            
+        if(firstLastNameRegExp.test(lastName.value)==false){
+
+            //Alors on affiche le message d'erreur :
+            document.querySelector("#lastNameErrorMsg").innerText = "Le nom ne peut contenir que des lettres majuscules et miniuscules sans accents";
+        } else{
+
+            //Alors on efface le message d'erreur :
+            document.querySelector("#lastNameErrorMsg").innerText = "";
+        }
+    
+    });
+
+    address.addEventListener("change", function(){
+            
+        if(addressCityRegExp.test(address.value)==false){
+
+            //Alors on affiche le message d'erreur :
+            document.querySelector("#addressErrorMsg").innerText = "L'adresse ne peut contenir que des lettres majuscules, miniuscules et des chiffres sans accents";
+    
+        } else{
+
+            //Alors on efface le message d'erreur :
+            document.querySelector("#addressErrorMsg").innerText = "";
+        }
+    
+    });
+
+    city.addEventListener("change", function(){
+            
+        if(addressCityRegExp.test(city.value)==false){
+
+            //Alors on affiche le message d'erreur :
+            document.querySelector("#cityErrorMsg").innerText = "La ville ne peut contenir que des lettres majuscules, miniuscules et des chiffres sans accents";
+    
+        } else{
+
+            //Alors on efface le message d'erreur :
+            document.querySelector("#cityErrorMsg").innerText = "";
+        }
+    
+    });
+
+    email.addEventListener("change", function(){
+            
+        if(emailRegExp.test(email.value)==false){
+    
+            //Alors on affiche le message d'erreur :
+            document.querySelector("#emailErrorMsg").innerText = "L'email n'est pas valide."; 
+        } else{
+
+            //Alors on efface le message d'erreur :
+            document.querySelector("#emailErrorMsg").innerText = "";
+        }
+    
+    });
+
+}
+
+
+function validatingForm(firstName,lastName,address,city,email,firstLastNameRegExp,addressCityRegExp,emailRegExp){
+
+    //Si le prénom est valide :
+    if(firstLastNameRegExp.test(firstName.value)==true){ 
+        //Si le nom est valide :
+        if(firstLastNameRegExp.test(lastName.value)==true){
+            //Si l'adresse est valide :
+            if(addressCityRegExp.test(address.value)==true){
+                //Si la ville est valide :
+                if(addressCityRegExp.test(city.value)==true){
+                    //Si l'email est valide :
+                    if(emailRegExp.test(email.value)==true){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+function displayErrorMsg(firstName,lastName,address,city,email,firstLastNameRegExp,addressCityRegExp,emailRegExp){
+
+    //Si le prénom n'est pas valide :
+    if(firstLastNameRegExp.test(firstName.value)==false){
+    
+        //Alors on affiche le message d'erreur :
+        document.querySelector("#firstNameErrorMsg").innerText = "Le prénom ne peut contenir que des lettres majuscules et miniuscules sans accents";
+    }
+
+    //Si le nom n'est pas valide :
+    if(firstLastNameRegExp.test(lastName.value)==false){
+
+        //Alors on affiche le message d'erreur :
+        document.querySelector("#lastNameErrorMsg").innerText = "Le nom ne peut contenir que des lettres majuscules et miniuscules sans accents";
+    }
+ 
+    //Si l'adresse n'est pas valide :
+    if(addressCityRegExp.test(address.value)==false){
+
+        //Alors on affiche le message d'erreur :
+        document.querySelector("#addressErrorMsg").innerText = "L'adresse ne peut contenir que des lettres majuscules, miniuscules et des chiffres sans accents";
+
+    }
+
+    //Si la ville n'est pas valide :
+    if(addressCityRegExp.test(city.value)==false){
+
+        //Alors on affiche le message d'erreur :
+        document.querySelector("#cityErrorMsg").innerText = "La ville ne peut contenir que des lettres majuscules, miniuscules et des chiffres sans accents";
+
+    }
+    
+    //Si l'email n'est pas valide :
+    if(emailRegExp.test(email.value)==false){
+
+        //Alors on affiche le message d'erreur :
+        document.querySelector("#emailErrorMsg").innerText = "L'email n'est pas valide."; 
+    }
+
+}
