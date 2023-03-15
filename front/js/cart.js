@@ -369,6 +369,8 @@ formCartOrderElement.addEventListener("submit", function(event){
     }    
 });
 
+
+//fonction pour enlever les messages d'erreurs si le champs de saisie est valide :
 function changeErrorMsg(firstName,lastName,address,city,email,firstLastNameRegExp,addressCityRegExp,emailRegExp){
 
     firstName.addEventListener("change", function(){
@@ -446,6 +448,7 @@ function changeErrorMsg(firstName,lastName,address,city,email,firstLastNameRegEx
 }
 
 
+//Fonction pour valider le formulaire
 function validatingForm(firstName,lastName,address,city,email,firstLastNameRegExp,addressCityRegExp,emailRegExp){
 
     //Si le prénom est valide :
@@ -469,6 +472,7 @@ function validatingForm(firstName,lastName,address,city,email,firstLastNameRegEx
 }
 
 
+//fonction pour afficher les messages d'erreurs si le champs de saisie n'est pas valide :
 function displayErrorMsg(firstName,lastName,address,city,email,firstLastNameRegExp,addressCityRegExp,emailRegExp){
 
     //Si le prénom n'est pas valide :

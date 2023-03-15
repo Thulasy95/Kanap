@@ -144,6 +144,7 @@ function createTagWithClass(tag,classValue,parent){
 }
 
 
+//fonction pour créer une balise input de type number
 function createInputNumber(classe,name,value,min,max,parent){
     
     const inputNumberElement = document.createElement("input");

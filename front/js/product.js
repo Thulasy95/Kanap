@@ -54,6 +54,7 @@ fetchRequestAPIData().then(product => {
 });
 
 
+//fonction pour ajouter un produit au panier lors du "click" sur le bouton
 function buttonAddProduct(buttonAddToCart,product)
 {
     buttonAddToCart.addEventListener("click", function(){
