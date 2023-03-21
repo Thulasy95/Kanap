@@ -12,6 +12,3 @@ Aujourd’hui, celle-ci souhaiterait avoir une plateforme de e-commerce en plus 
 Mission : Intégrer dynamiquement les éléments de l’API dans les différentes pages web avec JavaScript.
 
 ![image](https://user-images.githubusercontent.com/116100441/226620212-d6b7399c-8d68-4d11-be96-1e996c6cfde5.png)
-
-Vous trouverez, ci-dessous, le lien URL pour accéder au site web :
-
